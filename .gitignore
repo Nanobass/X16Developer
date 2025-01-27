@@ -1,0 +1,5 @@
+.vscode
+llvm-mos
+*.o
+*.elf
+*.prg

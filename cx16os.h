@@ -1,39 +1,39 @@
 #pragma once
 
-#define FALSE		    0
-#define TRUE		    1
+#define FALSE 0
+#define TRUE  1
 
 #define NEAR
 #define FAR
 
-typedef char	          BOOL;
-typedef unsigned char	  BYTE;
-typedef unsigned int	  WORD;
-typedef unsigned long	  DWORD;
-typedef char	          STR;
-typedef char NEAR	     *PSTR;
-typedef char NEAR	     *NPSTR;
-typedef char FAR	     *LPSTR;
+#define INVALID_HANDLE 0xFFFF
+
+typedef char              BOOL;
+typedef unsigned char     BYTE;
+typedef unsigned int      WORD;
+typedef unsigned long     DWORD;
+typedef char              STR;
+typedef char NEAR        *PSTR;
+typedef char NEAR        *NPSTR;
+typedef char FAR         *LPSTR;
 typedef char const NEAR  *PCSTR;
 typedef char const NEAR  *NPCSTR;
 typedef char const FAR   *LPCSTR;
-typedef BYTE NEAR	     *PBYTE;
-typedef BYTE FAR	     *LPBYTE;
-typedef int NEAR	     *PINT;
-typedef int FAR 	     *LPINT;
-typedef WORD NEAR	     *PWORD;
-typedef WORD FAR	     *LPWORD;
-typedef long NEAR	     *PLONG;
-typedef long FAR	     *LPLONG;
-typedef DWORD NEAR	     *PDWORD;
-typedef DWORD FAR	     *LPDWORD;
-typedef void FAR	     *LPVOID;
-typedef WORD		      HANDLE;
-typedef HANDLE		     *PHANDLE;
-typedef HANDLE NEAR	     *SPHANDLE;
-typedef HANDLE FAR	     *LPHANDLE;
-
-#define INVALID_HANDLE 0xFFFF
+typedef BYTE NEAR        *PBYTE;
+typedef BYTE FAR         *LPBYTE;
+typedef int NEAR         *PINT;
+typedef int FAR          *LPINT;
+typedef WORD NEAR        *PWORD;
+typedef WORD FAR         *LPWORD;
+typedef long NEAR        *PLONG;
+typedef long FAR         *LPLONG;
+typedef DWORD NEAR       *PDWORD;
+typedef DWORD FAR        *LPDWORD;
+typedef void FAR         *LPVOID;
+typedef WORD              HANDLE;
+typedef HANDLE           *PHANDLE;
+typedef HANDLE NEAR      *SPHANDLE;
+typedef HANDLE FAR       *LPHANDLE;
 
 /*
 *   Memory API

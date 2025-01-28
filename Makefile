@@ -1,6 +1,7 @@
 include llvm-mos\Makefile.pref
 
-OBJS +=entry.o thread.o context.o kernel.o assert.o memory.o
+CFLAGS += -Os
+OBJS += entry.o thread.o context.o kernel.o exception.o memory.o
 BIN = X16IDE.PRG
 
 $(BIN): $(OBJS)

@@ -1,7 +1,33 @@
+//=============================================================================
+//                       ___
+//  __         __   __  |   
+// |   \/ /|  |__  |  | |__
+// |__ /\ _|_ |__| |__|    |
+// ________________________|
+// Commander X16 Graphical Multitasking Environment
+//
+// File:        memory.c
+//
+// Description: memory manager with a global heap and a runtime compressable
+//              memory system in form of handles. the memory manager will
+//              dynamically rearrange memory at runtime to reduce fragmentation.
+//              this only works for the "handle heap" and the global heap is
+//              still fragmentable. to get a handle you need to lock it first,
+//              excluding it from rearrangement
+//=============================================================================
+
+//========================================
+// System Includes
+//========================================
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+//========================================
+// Project Includes
+//========================================
 
 #include "cx16os.h"
 
@@ -25,9 +51,6 @@ struct {
 void FAR InitializeMemory()
 {
     __set_heap_limit(16384);
-    printf("memory: increased heap limit to %u bytes\n", __heap_limit());
-    printf("memory: %u/%u bytes (%u bytes free)\n", __heap_bytes_used(), __heap_limit(), __heap_bytes_free());
-    printf("memory: %u handles allocated\n", MAX_HANDLES);
     memset(&HandleHeap, 0, sizeof(HandleHeap));
 }
 
@@ -67,7 +90,7 @@ LPHANDLEENTRY FAR GetFreeHandle(LPHANDLE lpHandle)
             return lpEntry;
         }
     }
-    ASSERT(!"out of handles");
+    ERROR("out of handles");
     return NULL;
 }
 

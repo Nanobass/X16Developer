@@ -6,13 +6,6 @@
 #define NEAR
 #define FAR
 
-#define MAKELONG(a, b)	    ((LONG)(((WORD)(a)) | ((DWORD)((WORD)(b))) << 16))
-#define LOWORD(l)	    ((WORD)(l))
-#define HIWORD(l)	    ((WORD)(((DWORD)(l) >> 16) & 0xFFFF))
-#define LOBYTE(w)	    ((BYTE)(w))
-#define HIBYTE(w)	    ((BYTE)(((WORD)(w) >> 8) & 0xFF))
-#define BITTEST(w, m)   (w & m)
-
 typedef char	          BOOL;
 typedef unsigned char	  BYTE;
 typedef unsigned int	  WORD;
@@ -43,14 +36,6 @@ typedef HANDLE FAR	     *LPHANDLE;
 #define INVALID_HANDLE 0xFFFF
 
 /*
-*   Assertion API
-*/
-
-#define ASSERT(expression) Assert(expression, __FILE__, __PRETTY_FUNCTION__, __LINE__, #expression)
-
-void FAR Assert(BOOL bCondition, LPCSTR lpFile, LPCSTR lpFunction, WORD lpLine, LPCSTR lpErrorMessage);
-
-/*
 *   Memory API
 */
 
@@ -66,10 +51,39 @@ void   FAR UnlockHandle(HANDLE hHandle);
 *   Threading API
 */
 
-typedef struct THREAD_ THREAD;
-typedef THREAD        *PTHREAD;
-typedef THREAD NEAR   *NPTHREAD;
-typedef THREAD FAR    *LPTHREAD;
+typedef struct CONTEXT_ {
+    LPVOID ReturnAddress;
+    BYTE HardStackPointer;
+    LPVOID SoftStackPointer;
+    BYTE CalleeSavedRegisters[14];
+} CONTEXT;
+typedef CONTEXT      *PCONTEXT;
+typedef CONTEXT NEAR *NPCONTEXT;
+typedef CONTEXT FAR  *LPCONTEXT;
+
+WORD FAR SaveContextAndStack(LPCONTEXT lpContext, LPVOID lpHardStack);
+void FAR LoadContextAndStack(LPCONTEXT lpContext, LPVOID lpHardStack);
+WORD FAR SaveContext(LPCONTEXT lpContext);
+void FAR LoadContext(LPCONTEXT lpContext, WORD wParam);
+
+typedef struct THREAD_ {
+    struct THREAD_ FAR *Prev;
+    struct THREAD_ FAR *Next;
+
+    STR Name[16];
+    WORD Status;
+    CONTEXT Context;
+
+    void (FAR *Entry) (LPVOID);
+    LPVOID Args;
+    
+    BYTE HardStack[256];
+    WORD StackSize;
+    BYTE SoftStack[];
+} THREAD;
+typedef THREAD      *PTHREAD;
+typedef THREAD NEAR *NPTHREAD;
+typedef THREAD FAR  *LPTHREAD;
 
 LPTHREAD FAR CreateThread(void (FAR *lpEntry) (LPVOID), LPVOID lpArgs, WORD wStackSize, LPCSTR lpName);
 void     FAR SleepThread(WORD wMillis);
@@ -77,6 +91,18 @@ void     FAR KillThread(LPTHREAD hThread);
 void     FAR YieldThread();
 LPTHREAD FAR CurrentThread();
 LPCSTR   FAR GetThreadName(LPTHREAD lpThread);
+
+/*
+*   Exception API
+*/
+
+#define ASSERT(expression) Assert(expression, __FILE__, __PRETTY_FUNCTION__, __LINE__, #expression)
+#define ERROR(message) Assert(0, __FILE__, __PRETTY_FUNCTION__, __LINE__, #message)
+#define TRY CONTEXT wExceptionContext[1]; WORD wExceptionParam = SaveContext(wExceptionContext); if(wExceptionParam == 0)
+#define CATCH(wExceptionParam) else
+#define THROW(wParam) LoadContext(wExceptionContext, wParam)
+
+void FAR Assert(BOOL bCondition, LPCSTR lpFile, LPCSTR lpFunction, WORD lpLine, LPCSTR lpErrorMessage);
 
 /*
 *   Kernel API

@@ -10,28 +10,28 @@
 
 typedef char              BOOL;
 typedef unsigned char     BYTE;
-typedef unsigned int      WORD;
-typedef unsigned long     DWORD;
 typedef char              STR;
+typedef unsigned int      WORD;
+typedef int               INT;
+typedef unsigned long     DWORD;
+typedef long              LONG;
 typedef char NEAR        *PSTR;
-typedef char NEAR        *NPSTR;
 typedef char FAR         *LPSTR;
 typedef char const NEAR  *PCSTR;
-typedef char const NEAR  *NPCSTR;
 typedef char const FAR   *LPCSTR;
 typedef BYTE NEAR        *PBYTE;
 typedef BYTE FAR         *LPBYTE;
-typedef int NEAR         *PINT;
-typedef int FAR          *LPINT;
+typedef INT NEAR         *PINT;
+typedef INT FAR          *LPINT;
 typedef WORD NEAR        *PWORD;
 typedef WORD FAR         *LPWORD;
-typedef long NEAR        *PLONG;
-typedef long FAR         *LPLONG;
+typedef LONG NEAR        *PLONG;
+typedef LONG FAR         *LPLONG;
 typedef DWORD NEAR       *PDWORD;
 typedef DWORD FAR        *LPDWORD;
+typedef void NEAR        *PVOID;
 typedef void FAR         *LPVOID;
 typedef WORD              HANDLE;
-typedef HANDLE           *PHANDLE;
 typedef HANDLE NEAR      *SPHANDLE;
 typedef HANDLE FAR       *LPHANDLE;
 
@@ -57,8 +57,7 @@ typedef struct CONTEXT_ {
     LPVOID SoftStackPointer;
     BYTE CalleeSavedRegisters[14];
 } CONTEXT;
-typedef CONTEXT      *PCONTEXT;
-typedef CONTEXT NEAR *NPCONTEXT;
+typedef CONTEXT NEAR *PCONTEXT;
 typedef CONTEXT FAR  *LPCONTEXT;
 
 WORD FAR SaveContextAndStack(LPCONTEXT lpContext, LPVOID lpHardStack);
@@ -81,8 +80,7 @@ typedef struct THREAD_ {
     WORD StackSize;
     BYTE SoftStack[];
 } THREAD;
-typedef THREAD      *PTHREAD;
-typedef THREAD NEAR *NPTHREAD;
+typedef THREAD NEAR *PTHREAD;
 typedef THREAD FAR  *LPTHREAD;
 
 LPTHREAD FAR CreateThread(void (FAR *lpEntry) (LPVOID), LPVOID lpArgs, WORD wStackSize, LPCSTR lpName);

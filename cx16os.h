@@ -8,17 +8,25 @@
 
 #define INVALID_HANDLE 0xFFFF
 
+#define CHECK_MAX(X,MAX) if(X>=MAX)
+#define CHECK_MIN(X,MIN) if(X<MIN)
+#define CHECK_RANGE(X,MIN,MAX) if(X<MIN&&X>=MAX)
+#define CHECK_ERROR(X) if(X<0)
+#define CHECK_NONZERO(X) if(!X)
+#define ERROR_RETURN(VALUE,FORMAT,...) { printf(FORMAT, __VA_ARGS__); return VALUE; }
+
 typedef char              BOOL;
 typedef unsigned char     BYTE;
 typedef char              STR;
+typedef char              CHAR;
 typedef unsigned int      WORD;
 typedef int               INT;
 typedef unsigned long     DWORD;
 typedef long              LONG;
-typedef char NEAR        *PSTR;
-typedef char FAR         *LPSTR;
-typedef char const NEAR  *PCSTR;
-typedef char const FAR   *LPCSTR;
+typedef STR NEAR         *PSTR;
+typedef STR FAR          *LPSTR;
+typedef STR const NEAR   *PCSTR;
+typedef STR const FAR    *LPCSTR;
 typedef BYTE NEAR        *PBYTE;
 typedef BYTE FAR         *LPBYTE;
 typedef INT NEAR         *PINT;
@@ -35,17 +43,38 @@ typedef WORD              HANDLE;
 typedef HANDLE NEAR      *SPHANDLE;
 typedef HANDLE FAR       *LPHANDLE;
 
+typedef INT (FAR  *FARPROC)();
+typedef INT (NEAR *NEARPROC)();
+
+typedef HANDLE HMODULE;
+typedef HANDLE HGLOBAL;
+typedef HANDLE HSTR;
+
 /*
 *   Memory API
 */
 
-LPVOID FAR AllocateMemory(WORD wSize);
-void   FAR FreeMemory(LPVOID lpMemory);
-HANDLE FAR AllocateHandle(WORD wSize);
-BOOL   FAR ReallocateHandle(HANDLE hHandle, WORD wSize);
-void   FAR FreeHandle(HANDLE hHandle);
-LPVOID FAR LockHandle(HANDLE hHandle);
-void   FAR UnlockHandle(HANDLE hHandle);
+enum GMEM {
+    GMEM_MOVEABLE    = 0x0001,
+    GMEM_PAGEABLE    = 0x0002,
+    GMEM_BANKABLE    = 0x0004,
+    GMEM_ZEROINIT    = 0x0008,
+};
+
+enum GHINT {
+    GHINT_PAGEABLE   = 0x0001,
+    GHINT_COMPRESS   = 0x0002,
+};
+
+BOOL FAR GlobalCompact(WORD wFlags);
+void FAR GlobalHint(HGLOBAL hMem, WORD wFlags);
+HGLOBAL FAR GlobalAlloc(WORD wFlags, DWORD dwSize);
+HGLOBAL FAR GlobalReAlloc(HGLOBAL hMem, DWORD dwBytes, WORD wFlags);
+void FAR GlobalFree(HGLOBAL hMem);
+DWORD FAR GlobalSize(HGLOBAL hMem);
+WORD FAR GlobalFlags(HGLOBAL hMem);
+LPVOID FAR GlobalLock(HGLOBAL hMem);
+BOOL FAR GlobalUnlock(HGLOBAL hMem);
 
 /*
 *   Threading API
@@ -106,9 +135,6 @@ void FAR Assert(BOOL bCondition, LPCSTR lpFile, LPCSTR lpFunction, WORD lpLine, 
 *   Kernel API
 */
 
-WORD   FAR GetVersion(void);
-WORD   FAR GetNumTasks(void);
-
-HANDLE FAR LoadModule(LPCSTR lpModuleName);
-BOOL   FAR FreeModule(HANDLE hModule);
-LPVOID FAR GetProcAddress(HANDLE hModule, LPCSTR lpName);
+HMODULE FAR LoadModule(LPCSTR lpModuleName);
+BOOL    FAR FreeModule(HMODULE hModule);
+LPVOID  FAR GetProcAddress(HMODULE hModule, LPCSTR lpName);

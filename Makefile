@@ -1,11 +1,12 @@
 include llvm-mos\Makefile.pref
 
 CFLAGS += -Os
-OBJS += entry.o thread.o context.o kernel.o exception.o memory.o
+LDFLAGS += -Wl,--print-memory-usage
+OBJS += context.o kernel.o exception.o entry.o #thread.o 
 BIN = X16IDE.PRG
 
 $(BIN): $(OBJS)
-	$(LD) -o $(BIN) $(OBJS)
+	$(LD) $(LDFLAGS) -o $(BIN) $(OBJS)
 
 noelf: $(BIN)
 	del $(BIN).elf
